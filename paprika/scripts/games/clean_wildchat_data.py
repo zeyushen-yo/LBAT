@@ -75,7 +75,7 @@ def clean_wildchat_dataset() -> Dict[str, Any]:
 
 def clean_and_save_wildchat_dataset() -> None:
     records = clean_wildchat_dataset()
-    save_path = "/home/zs7353/generalizable_exploration/paprika/wildchat_cleaned_dataset.json"
+    save_path = "/home/zs7353/LBAT/paprika/wildchat_cleaned_dataset.json"
 
     write_json(
         data={"records": records},

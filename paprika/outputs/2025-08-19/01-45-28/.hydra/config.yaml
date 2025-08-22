@@ -21,7 +21,7 @@ curriculum_file: null
 curriculum_round: -1
 curriculum: null
 repo_dir: ???
-save_dir: /home/zs7353/generalizable_exploration/paprika/exploration_datasets/${game_env.environment_name}_datasets/llm_evaluation_on_${game_env.environment_name}_split_${game_env.data_type}_agent_${agent.save_file_name}_env_${env.save_file_name}_judge_${judge.save_file_name}
+save_dir: /home/zs7353/LBAT/paprika/exploration_datasets/${game_env.environment_name}_datasets/llm_evaluation_on_${game_env.environment_name}_split_${game_env.data_type}_agent_${agent.save_file_name}_env_${env.save_file_name}_judge_${judge.save_file_name}
 save_file: ${save_dir}/llm_evaluation_trajectories_agent_${agent.save_file_name}_env_${env.save_file_name}_judge_${judge.save_file_name}_${game_env.data_type}_${start_index}_${end_index}_seed_${seed}.json
 agent:
   model_name: /scratch/gpfs/zs7353/Llama-3.1-8B-Instruct

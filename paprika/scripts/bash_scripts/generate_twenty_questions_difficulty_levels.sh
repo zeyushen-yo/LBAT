@@ -12,6 +12,6 @@ GAME_ENV="twenty_questions"
 DATA_TYPE="train"
 
 # Modify the path here to reflect where the paprika directory is located
-cd /home/zs7353/generalizable_exploration/paprika
+cd /home/zs7353/LBAT/paprika
 
 python scripts/games/generate_twenty_questions_difficulty_levels.py judge=$JUDGE game_env=$GAME_ENV game_env.data_type=$DATA_TYPE

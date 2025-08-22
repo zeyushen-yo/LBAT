@@ -89,7 +89,7 @@ SEED=69
 NUM_TRAJECTORIES_PER_GAME_SCENARIO=4
 
 # Modify the path here to reflect where the paprika directory is located
-cd /home/zs7353/generalizable_exploration/paprika
+cd /home/zs7353/LBAT/paprika
 
 run_one() {
     local idx=$1

@@ -21,7 +21,7 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-SLURM_SCRIPT="/home/zs7353/generalizable_exploration/paprika/scripts/slurm_scripts/run_evaluation.slurm"
+SLURM_SCRIPT="/home/zs7353/LBAT/paprika/scripts/slurm_scripts/run_evaluation.slurm"
 
 for TASK_IDX in {0..9}; do
   if [[ -n "$MODEL_ARG" ]]; then

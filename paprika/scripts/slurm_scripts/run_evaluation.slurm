@@ -29,6 +29,6 @@ if [ -z "${AGENT_MODEL_NAME:-}" ]; then
     # export AGENT_MODEL_NAME="/scratch/gpfs/zs7353/ragen/underspecified-bandit-grpo_baseline_kl/global_step_200/actor/merged_hf"
 fi
 
-cd /home/zs7353/generalizable_exploration/paprika/scripts/bash_scripts
+cd /home/zs7353/LBAT/paprika/scripts/bash_scripts
 echo "Starting array task ${SLURM_ARRAY_TASK_ID} (TASK_NUM=${TASK_NUM}) with AGENT_MODEL_NAME=${AGENT_MODEL_NAME}"
 bash run_evaluation.sh
