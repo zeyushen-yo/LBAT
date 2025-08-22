@@ -1,0 +1,16 @@
+- seed=69
+- agent=llama-3.1-8b-instruct
+- env=gpt-4o-mini
+- judge=gpt-4o-mini
+- game_env=twenty_questions
+- game_env.data_type=eval
+- start_index=0
+- end_index=1
+- agent.model_name=/scratch/gpfs/zs7353/ragen/underspecified-bandit-grpo_baseline_kl/global_step_200/actor
+- agent.tokenizer_name=/scratch/gpfs/zs7353/ragen/underspecified-bandit-grpo_baseline_kl/global_step_200/actor
+- agent.finetuned_tokenizer=false
+- agent.save_file_name=Llama-3.1-8b-instruct
+- agent.model_max_length=20000
+- agent_temperature=0.7
+- num_trajectories_per_game_scenario=4
+- agent_model_supports_system_message=true

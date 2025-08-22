@@ -1,0 +1,8 @@
+Step,Action,Reasoning,Observation,Reward,Done
+0,go forward,,"a wall 2 steps right
+a purple key 1 step forward",0,False
+1,go forward,,"a wall 2 steps right
+a purple key 1 step forward",0,False
+2,pick up,,"You carry a purple key
+a wall 2 steps forward
+a wall 2 steps right",0.9578125,True

@@ -1,0 +1,5 @@
+[2025-08-05 10:45:12,325][openai._base_client][INFO] - Retrying request to /chat/completions in 0.414470 seconds
+[2025-08-05 10:45:12,743][openai._base_client][INFO] - Retrying request to /chat/completions in 0.976041 seconds
+[2025-08-05 10:45:24,268][openai._base_client][INFO] - Retrying request to /chat/completions in 0.479136 seconds
+[2025-08-05 10:45:24,751][openai._base_client][INFO] - Retrying request to /chat/completions in 0.848719 seconds
+[2025-08-05 10:45:36,142][openai._base_client][INFO] - Retrying request to /chat/completions in 0.458995 seconds

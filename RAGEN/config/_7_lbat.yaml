@@ -1,0 +1,28 @@
+defaults:
+  - base
+
+actor_rollout_ref:
+  rollout:
+    response_length: 128
+    val_kwargs:
+      do_sample: True
+      temperature: 0.5
+
+trainer:
+  experiment_name: lbat-base
+
+agent_proxy:
+  max_turn: 20
+  max_actions_per_turn: 1
+
+es_manager:
+  train:
+    env_configs:
+      tags: ["LBAT"]
+  val:
+    env_groups: 8
+    env_configs:
+      tags: ["LBAT"]
+      n_groups: [8]
+
+

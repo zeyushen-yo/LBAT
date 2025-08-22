@@ -1,0 +1,202 @@
+from __future__ import annotations
+from dataclasses import dataclass, asdict, replace
+from typing import Any, Dict, List, Optional, Tuple
+import numpy as np
+import math
+import copy
+
+@dataclass
+class LBATItem:
+    family: str  # 'mab' | 'pea' | 'ops'
+    params: Any  # one of BanditParams | PEAParams | OPSParams
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {"family": self.family, "params": self.params.to_dict()}
+
+    def canonical_key(self, decimals: int = 6) -> Tuple:
+        return (self.family, ) + tuple(self.params.canonical_key(decimals=decimals))
+
+
+@dataclass
+class BanditParams:
+    type: str
+    num_arms: int
+    horizon: int
+    arm_prior_alpha: Optional[List[float]] = None
+    arm_prior_beta: Optional[List[float]] = None
+    arm_true_p: Optional[List[float]] = None
+    arm_prior_mu: Optional[List[float]] = None
+    arm_prior_sigma: Optional[List[float]] = None
+    arm_true_mu: Optional[List[float]] = None
+    arm_true_sigma: Optional[List[float]] = None
+    arm_prior_a: Optional[List[float]] = None
+    arm_prior_b: Optional[List[float]] = None
+    arm_true_lambda: Optional[List[float]] = None
+
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
+
+    def canonical_key(self, decimals: int = 6) -> Tuple:
+        def r(v):
+            return None if v is None else tuple(round(float(x), decimals) for x in v)
+        return (
+            self.type,
+            int(self.num_arms),
+            int(self.horizon),
+            r(self.arm_prior_alpha), r(self.arm_prior_beta), r(self.arm_true_p),
+            r(self.arm_prior_mu), r(self.arm_prior_sigma), r(self.arm_true_mu), r(self.arm_true_sigma),
+            r(self.arm_prior_a), r(self.arm_prior_b), r(self.arm_true_lambda),
+        )
+
+
+@dataclass
+class PEAParams:
+    num_experts: int
+    horizon: int
+    # Latent truth Bernoulli parameter
+    truth_p: float
+    # Per-expert sharpness parameter kappa tying expert predictions to truth_p
+    # Expert i predictions are drawn from Beta(kappa_i * truth_p, kappa_i * (1 - truth_p))
+    expert_kappa: List[float]
+    # Per-expert bias in logit space added to the drawn probability
+    # After sampling p_i, compute z_i = logit(p_i) + bias_i, then p'_i = sigmoid(z_i)
+    expert_bias: List[float]
+
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
+
+    def canonical_key(self, decimals: int = 6) -> Tuple:
+        r = lambda v: tuple(round(float(x), decimals) for x in v)
+        return (
+            int(self.num_experts),
+            int(self.horizon),
+            round(float(self.truth_p), decimals),
+            r(self.expert_kappa),
+            r(self.expert_bias),
+        )
+
+
+@dataclass
+class OPSParams:
+    num_assets: int
+    horizon: int
+    # Log-return distribution params per asset: Normal(mu, sigma)
+    mu: List[float]
+    sigma: List[float]
+    # Correlation matrix represented by its upper-triangular off-diagonal entries (row-major order)
+    # We reconstruct a covariance of log-returns as diag(sigma) * Corr * diag(sigma)
+    corr_upper: List[float]
+
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
+
+    def canonical_key(self, decimals: int = 6) -> Tuple:
+        r = lambda v: tuple(round(float(x), decimals) for x in v)
+        return (
+            int(self.num_assets),
+            int(self.horizon),
+            r(self.mu),
+            r(self.sigma),
+            r(self.corr_upper),
+        )
+
+
+class AccelBuffer:
+    def __init__(self, capacity: int, temperature: float = 0.5, seed: int = 0):
+        self.capacity = capacity
+        self.temperature = max(1e-6, float(temperature))
+        self.items: List[Tuple[float, Any]] = []  # (score, params)
+        self.index: dict[Tuple, int] = {}
+        self.rng = np.random.default_rng(seed)
+
+    def __len__(self): return len(self.items)
+
+    def min_score(self) -> float:
+        return min((s for s,_ in self.items), default=-math.inf)
+
+    def add(self, score: float, params: Any) -> bool:
+        key = params.canonical_key()
+        s = float(score)
+        if key in self.index:
+            i = self.index[key]
+            self.items[i] = (s, copy.deepcopy(params))
+            return True
+        if len(self.items) < self.capacity:
+            self.index[key] = len(self.items)
+            self.items.append((s, copy.deepcopy(params)))
+            return True
+        worst_idx = min(range(len(self.items)), key=lambda j: self.items[j][0])
+        if s <= self.items[worst_idx][0]:
+            return False
+        evicted_key = self.items[worst_idx][1].canonical_key()
+        self.index.pop(evicted_key, None)
+        self.items[worst_idx] = (s, copy.deepcopy(params))
+        self.index[key] = worst_idx
+        return True
+
+    def sample(self, k: int = 1) -> List[Any]:
+        assert self.items, "Buffer empty"
+        scores = np.array([s for s,_ in self.items], dtype=float)
+        logits = scores / self.temperature
+        logits -= logits.max()
+        p = np.exp(logits); p /= p.sum()
+        idx = self.rng.choice(len(self.items), size=k, p=p, replace=(k>1))
+        return [copy.deepcopy(self.items[i][1]) for i in np.atleast_1d(idx)]
+
+
+def _clamp_list(xs: List[float], lo: float, hi: float) -> List[float]:
+    return [float(np.clip(x, lo, hi)) for x in xs]
+
+
+def perturb_params(params: Any,
+                   rng: np.random.Generator,
+                   sigma_small: float = 0.05,
+                   sigma_big: float = 0.15,
+                   cfg: Optional[object] = None) -> Any:
+    q = replace(params)
+    sigma = rng.uniform(sigma_small, sigma_big)
+
+    if isinstance(q, BanditParams):
+        if q.type == "beta-bernoulli":
+            q.arm_prior_alpha = [a + rng.normal(0, sigma) for a in q.arm_prior_alpha]
+            q.arm_prior_beta = [b + rng.normal(0, sigma) for b in q.arm_prior_beta]
+            q.arm_true_p = [p_ + rng.normal(0, sigma) for p_ in q.arm_true_p]
+        elif q.type == "gaussian-gaussian":
+            q.arm_prior_mu = [m + rng.normal(0, sigma) for m in q.arm_prior_mu]
+            q.arm_true_mu = [m + rng.normal(0, sigma) for m in q.arm_true_mu]
+            q.arm_prior_sigma = [s + rng.normal(0, sigma) for s in q.arm_prior_sigma]
+            q.arm_true_sigma = [s + rng.normal(0, sigma) for s in q.arm_true_sigma]
+        elif q.type == "poisson-gamma":
+            q.arm_prior_a = [a + rng.normal(0, sigma) for a in q.arm_prior_a]
+            q.arm_prior_b = [b + rng.normal(0, sigma) for b in q.arm_prior_b]
+            q.arm_true_lambda = [l + rng.normal(0, sigma) for l in q.arm_true_lambda]
+        if cfg is not None:
+            if q.type == "beta-bernoulli":
+                q.arm_prior_alpha = _clamp_list(q.arm_prior_alpha, cfg.min_alpha, cfg.max_alpha)
+                q.arm_prior_beta = _clamp_list(q.arm_prior_beta, cfg.min_beta, cfg.max_beta)
+                q.arm_true_p = _clamp_list(q.arm_true_p, cfg.min_p, cfg.max_p)
+            elif q.type == "gaussian-gaussian":
+                q.arm_prior_mu = _clamp_list(q.arm_prior_mu, cfg.min_mu_prior, cfg.max_mu_prior)
+                q.arm_true_mu = _clamp_list(q.arm_true_mu, cfg.min_mu_true, cfg.max_mu_true)
+                q.arm_prior_sigma = _clamp_list(q.arm_prior_sigma, cfg.min_sigma_prior, cfg.max_sigma_prior)
+                q.arm_true_sigma = _clamp_list(q.arm_true_sigma, cfg.min_sigma_true, cfg.max_sigma_true)
+            elif q.type == "poisson-gamma":
+                q.arm_prior_a = _clamp_list(q.arm_prior_a, cfg.min_a, cfg.max_a)
+                q.arm_prior_b = _clamp_list(q.arm_prior_b, cfg.min_b, cfg.max_b)
+                q.arm_true_lambda = _clamp_list(q.arm_true_lambda, cfg.min_lambda, cfg.max_lambda)
+        return q
+
+    if isinstance(q, PEAParams):
+        q.truth_p = float(np.clip(q.truth_p + rng.normal(0, sigma), getattr(cfg, 'pea_min_truth_p', 0.01), getattr(cfg, 'pea_max_truth_p', 0.99)))
+        q.expert_kappa = _clamp_list([k + rng.normal(0, sigma) for k in q.expert_kappa], getattr(cfg, 'pea_min_expert_kappa', 0.5), getattr(cfg, 'pea_max_expert_kappa', 100.0))
+        q.expert_bias = _clamp_list([b + rng.normal(0, sigma) for b in q.expert_bias], getattr(cfg, 'pea_min_expert_bias', -3.0), getattr(cfg, 'pea_max_expert_bias', 3.0))
+        return q
+
+    if isinstance(q, OPSParams):
+        q.mu = _clamp_list([m + rng.normal(0, sigma) for m in q.mu], getattr(cfg, 'ops_min_mu', -0.1), getattr(cfg, 'ops_max_mu', 0.1))
+        q.sigma = _clamp_list([s + rng.normal(0, sigma) for s in q.sigma], getattr(cfg, 'ops_min_sigma', 1e-3), getattr(cfg, 'ops_max_sigma', 1.0))
+        # small random walk on correlations, then clip to [-0.9, 0.99]
+        q.corr_upper = _clamp_list([c + rng.normal(0, sigma) for c in q.corr_upper], -0.9, 0.99)
+        return q
+
+    return q
