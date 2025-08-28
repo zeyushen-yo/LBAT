@@ -5416,3 +5416,7 @@
 [2025-08-28 19:44:32,803][httpx][INFO] - HTTP Request: POST https://api-ai-sandbox.princeton.edu/openai/deployments/gpt-4o-mini/chat/completions?api-version=2025-03-01-preview "HTTP/1.1 400 Bad Request"
 [2025-08-28 19:44:43,622][httpx][INFO] - HTTP Request: POST https://api-ai-sandbox.princeton.edu/openai/deployments/gpt-4o-mini/chat/completions?api-version=2025-03-01-preview "HTTP/1.1 400 Bad Request"
 [2025-08-28 19:44:54,420][httpx][INFO] - HTTP Request: POST https://api-ai-sandbox.princeton.edu/openai/deployments/gpt-4o-mini/chat/completions?api-version=2025-03-01-preview "HTTP/1.1 400 Bad Request"
+[2025-08-28 19:45:05,269][httpx][INFO] - HTTP Request: POST https://api-ai-sandbox.princeton.edu/openai/deployments/gpt-4o-mini/chat/completions?api-version=2025-03-01-preview "HTTP/1.1 400 Bad Request"
+[2025-08-28 19:45:16,849][httpx][INFO] - HTTP Request: POST https://api-ai-sandbox.princeton.edu/openai/deployments/gpt-4o-mini/chat/completions?api-version=2025-03-01-preview "HTTP/1.1 200 OK"
+[2025-08-28 19:45:17,339][httpx][INFO] - HTTP Request: POST https://api-ai-sandbox.princeton.edu/openai/deployments/gpt-4o-mini/chat/completions?api-version=2025-03-01-preview "HTTP/1.1 400 Bad Request"
+[2025-08-28 19:45:28,197][httpx][INFO] - HTTP Request: POST https://api-ai-sandbox.princeton.edu/openai/deployments/gpt-4o-mini/chat/completions?api-version=2025-03-01-preview "HTTP/1.1 400 Bad Request"
