@@ -32,6 +32,58 @@ def get_special_tokens(tokenizer: AutoTokenizer):
         raise ValueError(f"Unsupported model: {tokenizer.name_or_path}")
     return special_token, reward_token
 
+
+def place_per_turn_rewards(input_ids, turn_indicators, all_scores, tokenizer,
+                           special_token, reward_token):
+    """
+    Returns score_tensor aligned to input_ids (no slicing yet).
+    For each assistant turn k, places that turn's scalar reward on the last
+    non-special token of the k-th assistant span; if empty, uses the span's last token.
+    """
+    device = input_ids.device
+    bsz, L = input_ids.shape
+    score_tensor = torch.zeros((bsz, L), dtype=torch.float32, device=device)
+
+    # Assistant spans are odd indices >= 3 (system=1, user=2, assistant=3, user=4, assistant=5, ...)
+    is_assistant_span = (turn_indicators % 2 == 1) & (turn_indicators > 1)
+    not_special = (input_ids != special_token) & (input_ids != reward_token)
+    if "llama-3" in tokenizer.name_or_path.lower():
+        END_HEADER_ID = 128007
+        not_special = not_special & (input_ids != END_HEADER_ID)
+
+    # Max assistant turn id present in the batch (3,5,7,...)
+    max_turn_id = int(turn_indicators.max().item())
+    # all_scores is list over batch of per-turn scalars; zip_longest groups by turn index
+    for k, scores_k in enumerate(zip_longest(*all_scores, fillvalue=0.0)):
+        turn_id = 3 + 2 * k
+        if turn_id > max_turn_id:
+            break
+
+        # tokens belonging to this assistant turn
+        span_k = is_assistant_span & (turn_indicators == turn_id)
+        # prefer last non-special token in the span
+        body_k = span_k & not_special
+
+        # find last index in a boolean mask per row: argmax over cumsum==sum
+        # (works even with left padding because we never use pad tokens in span_k)
+        def last_true(mask):
+            # mask: (bsz, L) boolean
+            cnt = mask.long().sum(-1, keepdim=True)                  # (bsz,1)
+            csm = mask.long().cumsum(-1)                             # (bsz,L)
+            last = (csm == cnt).long().argmax(-1)                    # (bsz,)
+            return last
+
+        has_body = body_k.any(-1)
+        last_body = last_true(body_k)
+        last_span = last_true(span_k)
+        last_idx  = torch.where(has_body, last_body, last_span)      # prefer body, else span end
+
+        scores_k = torch.tensor(scores_k, dtype=torch.float32, device=device)
+        score_tensor.scatter_(1, last_idx.unsqueeze(1), scores_k.unsqueeze(1))
+
+    return score_tensor
+
+
 def get_masks_and_scores(input_ids: torch.Tensor, tokenizer: AutoTokenizer, all_scores: List[List[float]] = None, use_turn_scores: bool = False, enable_response_mask: bool = False, debug: bool = False):
     """
     input_ids: shape (bsz, seq_len)
@@ -50,64 +102,34 @@ def get_masks_and_scores(input_ids: torch.Tensor, tokenizer: AutoTokenizer, all_
     response_mask = (turn_indicators % 2 == 1) & (turn_indicators > 1)
     
     score_tensor = torch.zeros_like(input_ids, dtype=torch.float32)
+
     if use_turn_scores:
-        for idx, scores in enumerate(zip_longest(*all_scores, fillvalue=0)):
-            scores = torch.tensor(scores, dtype=torch.float32)
-            turn_indicator = idx * 2 + 3 # 0: pad. 1: system. 2+2n: user. 3+2n: assistant
-            reward_position = (input_ids == reward_token) & (turn_indicators == turn_indicator)
-            # Set the last token of the rows where all positions are False to True
-            reward_position[~reward_position.any(dim=-1), -1] = True
-            score_tensor[reward_position] = scores
-        if "qwen" in tokenizer.name_or_path.lower():
-            # for Qwen, there is a "\n" between special token and reward token, so we shift this to make sure reward is assigned to the last token of a turn
-            score_tensor = score_tensor.roll(shifts=1, dims=-1)
+        score_tensor = place_per_turn_rewards(input_ids, turn_indicators, all_scores,
+                                            tokenizer, special_token, reward_token)
     else:
-        scores = [sum(i) for i in all_scores]
-        score_tensor[:, -1] = torch.tensor(scores, dtype=torch.float32)
-    score_tensor = score_tensor[:, 1:] # remove the first token
-    loss_mask = loss_mask[:, :-1] # remove the last token
-    response_mask = response_mask[:, :-1] # remove the last token
+        # single scalar per sequence – place it on the last *masked* position later
+        score_tensor = torch.zeros_like(input_ids, dtype=torch.float32)
+        seq_scores = torch.tensor([sum(x) for x in all_scores], dtype=torch.float32, device=input_ids.device)
+        # we'll place it after slicing, see below
 
+    # Align everything to label positions (responses = input_ids[:, 1:])
+    score_tensor  = score_tensor[:, 1:]
+    loss_mask     = loss_mask[:, 1:]
+    response_mask = response_mask[:, 1:]
+
+    if not use_turn_scores:
+        # Put the scalar on the last masked position so it participates in the loss
+        last_masked = (response_mask.cumsum(-1) == response_mask.sum(-1, keepdim=True)).argmax(-1)
+        score_tensor.zero_()
+        score_tensor.scatter_(1, last_masked.unsqueeze(1), seq_scores.unsqueeze(1))
+
+    # Safety check during debug
     if debug:
-        try:
-            with torch.no_grad():
-                bsz, seq_len = input_ids.shape
-                sample_idx = 0
-                # Basic stats
-                total_loss_tokens = int(loss_mask[sample_idx].sum().item())
-                total_resp_tokens = int(response_mask[sample_idx].sum().item())
-                print(f"[SANITY] seq_len={seq_len} loss_mask.sum={total_loss_tokens} response_mask.sum={total_resp_tokens}")
-
-                # Find assistant spans (contiguous True ranges in response_mask)
-                resp_row = response_mask[sample_idx].cpu().numpy().astype(int)
-                spans = []
-                in_span = False
-                start = 0
-                for i, v in enumerate(resp_row.tolist() + [0]):
-                    if v and not in_span:
-                        in_span = True
-                        start = i
-                    elif in_span and not v:
-                        in_span = False
-                        spans.append((start, i - 1))
-                print(f"[SANITY] assistant_spans={spans[:5]}{'...' if len(spans) > 5 else ''}")
-
-                # Reward positions: non-zero locations in score_tensor (for turn scores) or last token
-                nonzero = (score_tensor[sample_idx].abs() > 0)
-                nz_idx = torch.nonzero(nonzero).flatten().tolist()
-                print(f"[SANITY] reward_token_indices={nz_idx[:10]}{'...' if len(nz_idx) > 10 else ''}")
-
-                # Optional small decode window around first reward index
-                if len(nz_idx) > 0:
-                    idx0 = nz_idx[0]
-                    lo = max(0, idx0 - 10)
-                    hi = min(score_tensor.shape[1] - 1, idx0 + 10)
-                    # score_tensor is already shifted by 1 (first token removed), so map back to input_ids by +1
-                    window_ids = input_ids[sample_idx, lo + 1:hi + 2]
-                    snippet = tokenizer.decode(window_ids, skip_special_tokens=False)
-                    print(f"[SANITY] reward_context_snippet='{snippet[:120]}'")
-        except Exception as e:
-            print(f"[SANITY][warn] debug print failed: {e}")
+        nz = (score_tensor.abs() > 0)
+        bad = (nz & (~response_mask.bool())).any(dim=-1)  # any nonzero reward outside mask?
+        if bool(bad.any()):
+            idxs = torch.nonzero(bad).flatten().tolist()
+            print(f"[SANITY] nonzero rewards outside mask for rows: {idxs[:8]}{'...' if len(idxs)>8 else ''}")
 
     return score_tensor, loss_mask, response_mask
 
@@ -222,13 +244,21 @@ class ContextManager:
             llm_response = f"<think>{think_content}</think><answer>{action_content}</answer>" if self.config.agent_proxy.enable_think else f"<answer>{action_content}</answer>"
         return llm_response, actions
         
-    def _normalize_score_tensor(self, score_tensor: torch.Tensor, env_outputs: List[Dict]) -> torch.Tensor:
+    def _normalize_score_tensor(self,
+                                score_tensor: torch.Tensor,
+                                env_outputs: List[Dict],
+                                response_mask: torch.Tensor) -> torch.Tensor:
         """
-        Normalize the score tensor to be between 0 and 1.
-        NOTE: only support score at the last token for now
+        Normalize per-sequence scalar scores when use_turn_scores == False.
+        Works no matter which position the scalar currently occupies.
         """
-        assert self.config.agent_proxy.use_turn_scores == False, "Reward normalization is not supported for use_turn_scores == True"
-        
+        device = score_tensor.device
+        bsz, L = score_tensor.shape
+
+        # 1) Read the scalar per row (exactly one nonzero per row by construction)
+        acc_scores = score_tensor.sum(dim=-1)  # (bsz,)
+
+        # 2) Apply penalties and groupwise normalization (unchanged logic)
         rn_cfg = self.config.agent_proxy.reward_normalization
         grouping, method = rn_cfg.grouping, rn_cfg.method
         if grouping == "state":
@@ -240,40 +270,44 @@ class ContextManager:
         else:
             raise ValueError(f"Invalid grouping: {grouping}")
 
-
         if method == "mean_std":
-            norm_func = lambda x: (x - x.mean(dim=-1, keepdim=True)) / (x.std(dim=-1, keepdim=True) + 1e-6) if x.std(dim=-1, keepdim=True).abs().max() > 1e-6 else torch.zeros_like(x) # stable to bf16 than x.std()
+            def norm_func(x):
+                m = x.mean()
+                s = x.std()
+                return (x - m) / (s + 1e-6) if float(s) > 1e-6 else torch.zeros_like(x)
         elif method == "mean":
-            norm_func = lambda x: (x - x.mean(dim=-1, keepdim=True))
+            norm_func = lambda x: x - x.mean()
         elif method == "asym_clip":
-            norm_func = lambda x: ((x - x.mean(dim=-1, keepdim=True)) / (x.std(dim=-1, keepdim=True) + 1e-6) if x.std(dim=-1, keepdim=True).abs().max() > 1e-6 else torch.zeros_like(x)).clamp(min=-1, max=3)
+            def norm_func(x):
+                m = x.mean()
+                s = x.std()
+                y = (x - m) / (s + 1e-6) if float(s) > 1e-6 else torch.zeros_like(x)
+                return y.clamp(min=-1, max=3)
         elif method == "identity":
             norm_func = lambda x: x
         else:
             raise ValueError(f"Invalid normalization method: {method}")
 
-        # apply groupwise normalization
-        group2index = {}
-        for i, env_tag in enumerate(group_tags):
-            if env_tag not in group2index:
-                group2index[env_tag] = []
-            group2index[env_tag].append(i)
-        group2index = {k: torch.tensor(v) for k, v in group2index.items()}
+        penalty = torch.tensor([eo.get("penalty", 0.0) for eo in env_outputs],
+                            dtype=torch.float32, device=device)
+        normalized = acc_scores + penalty
 
-        
-        # apply penalty pre-normalization
-        acc_scores = score_tensor[:, -1]
-        normalized_acc_scores = acc_scores.clone()
-        penalty = torch.tensor([env_output.get("penalty", 0) for env_output in env_outputs], dtype=torch.float32)
-        normalized_acc_scores = normalized_acc_scores + penalty
+        # groupwise normalize if group_size > 1
+        from collections import defaultdict
+        idxs = defaultdict(list)
+        for i, g in enumerate(group_tags):
+            idxs[g].append(i)
+        normalized = normalized.clone()
+        for g, ii in idxs.items():
+            ii = torch.tensor(ii, device=device, dtype=torch.long)
+            normalized[ii] = norm_func(normalized[ii])
 
-        if len(group2index) < acc_scores.shape[0]: # the group size > 1
-            for group, index in group2index.items():
-                normalized_acc_scores[index] = norm_func(normalized_acc_scores[index])
+        # 3) Re-scatter normalized scalars to the last masked position
+        out = torch.zeros_like(score_tensor)
+        last_masked = (response_mask.cumsum(-1) == response_mask.sum(-1, keepdim=True)).argmax(-1)
+        out.scatter_(1, last_masked.unsqueeze(1), normalized.unsqueeze(1))
+        return out
 
-        score_tensor[:, -1] = normalized_acc_scores
-
-        return score_tensor
     
     def get_lm_inputs(self, env_outputs: List[Dict], prepare_for_update: bool) -> DataProto:
         """
@@ -287,6 +321,67 @@ class ContextManager:
         """
         llm_input_texts = []
         messages_list = [] # for api calling
+
+        # ---------- THINK STEP BONUS (scale-invariant) ----------
+        step_cfg = getattr(self.config.agent_proxy, "think_step_bonus", None)
+
+        def _count_tokens(txt: str) -> int:
+            if not txt:
+                return 0
+            return len(self.tokenizer.encode(txt, add_special_tokens=False))
+
+        def _think_pass(entry: Dict[str, Any]) -> bool:
+            if not (step_cfg and getattr(step_cfg, "enabled", True) and
+                    self.config.agent_proxy.enable_think and "llm_response" in entry):
+                return False
+            m = re.search(r"<think>(.*?)</think>", entry["llm_response"], flags=re.DOTALL)
+            if not m:
+                return False
+            think_txt = (m.group(1) or "").strip()
+            n = _count_tokens(think_txt)
+            min_tok = int(getattr(step_cfg, "min_tokens", 20))
+            if n < min_tok:
+                return False
+            # diversity gate
+            toks = self.tokenizer.encode(think_txt, add_special_tokens=False)
+            uniq_ratio = (len(set(toks)) / max(1.0, float(len(toks))))
+            if uniq_ratio < float(getattr(step_cfg, "min_unique_ratio", 0.25)):
+                return False
+            return True
+
+        # Collect all non-zero base rewards across the batch and compute a single scale.
+        batch_vals = []
+        for eo in env_outputs:
+            for entry in eo["history"]:
+                r = float(entry.get("reward", 0.0))
+                if r != 0.0:
+                    batch_vals.append(r)
+
+        def _robust_scale(vals: list[float], how: str) -> float:
+            if not vals:
+                return 1.0
+            t = torch.tensor(vals, dtype=torch.float32)
+            how = str(how or "std").lower()
+            if how == "std":
+                # Use population std for stability on small samples
+                s = float(t.std(unbiased=False).item())
+                return s if s > 1e-6 else max(1.0, float(t.abs().mean().item()))
+            if how == "mad":  # median absolute deviation
+                med = t.median().item()
+                mad = (t - med).abs().median().item()
+                # 1.4826 * MAD ≈ std if normal
+                s = 1.4826 * mad
+                return s if s > 1e-6 else max(1.0, float(t.abs().mean().item()))
+            if how == "mean_abs":
+                m = float(t.abs().mean().item())
+                return m if m > 1e-6 else 1.0
+            return 1.0
+
+        # One common scale for the whole batch
+        batch_scale = _robust_scale(batch_vals, getattr(step_cfg, "scale_by", "std"))
+        if not np.isfinite(batch_scale) or batch_scale <= 0:
+            batch_scale = 1.0
+
         for env_output in env_outputs:
             if 'state' in env_output['history'][-1] and prepare_for_update:
                 env_output['history'] = env_output['history'][:-1] # when prepare for update, we do not add the state from the n+1 turn to the trajectory
@@ -323,11 +418,6 @@ class ContextManager:
             assert all(msg["role"] == "assistant" for msg in messages[2::2])
 
             text = self.tokenizer.apply_chat_template(messages, add_generation_prompt=(not prepare_for_update), tokenize=False)
-            if not prepare_for_update:
-                if self.config.agent_proxy.enable_think:
-                    text += "<think>" # force the LLM to think before answering
-                else:
-                    text += "<answer>" # force the LLM to answer
             llm_input_texts.append(text)
             messages_list.append(messages)
 
@@ -336,12 +426,30 @@ class ContextManager:
         # position ids should start at 0 for first valid token and stay at 0 over padding
         position_ids = torch.clamp(attention_mask.cumsum(dim=-1) - 1, min=0)
         if prepare_for_update:
-            scores = [[i.get('reward', 0.0) for i in env_output['history']] for env_output in env_outputs]
+            scores = []
+            for eo in env_outputs:
+                # Always use the same scale for the whole batch
+                scale = float(batch_scale)
+                beta = float(getattr(step_cfg, "beta", 0.2)) if step_cfg else 0.0
+                only_pos = bool(getattr(step_cfg, "only_if_base_positive", True)) if step_cfg else True
+
+                per_turn = []
+                for entry in eo["history"]:
+                    base_r = float(entry.get("reward", 0.0))
+                    step = 0.0
+                    if step_cfg and getattr(step_cfg, "enabled", True):
+                        if (not only_pos) or (base_r > 0.0):
+                            if _think_pass(entry):
+                                step = beta * scale
+                                print(f"step: {step}, beta: {beta}, scale: {scale}")
+                    per_turn.append(base_r + step)
+                scores.append(per_turn)
+
             score_tensor, loss_mask, response_mask = get_masks_and_scores(input_ids, self.tokenizer, scores, use_turn_scores=self.config.agent_proxy.use_turn_scores, enable_response_mask=self.config.enable_response_mask, debug=self.debug_mask_sanity)
 
             normalized_score_tensor = score_tensor
             if not self.config.agent_proxy.use_turn_scores:
-                normalized_score_tensor = self._normalize_score_tensor(score_tensor, env_outputs)
+                normalized_score_tensor = self._normalize_score_tensor(score_tensor, env_outputs, response_mask)
             response_length = response_mask.sum(dim=-1).float().mean().item()
 
         llm_inputs = DataProto()
@@ -394,7 +502,6 @@ class ContextManager:
             )
         else: # dataproto has textual responses
             responses = lm_outputs.non_tensor_batch['response_texts']
-        responses = ["<think>" + response if self.config.agent_proxy.enable_think else "<answer>" + response for response in responses] # The LLM generation does not include <think> tags. Add them back here.
             
         env_ids = lm_outputs.non_tensor_batch['env_ids']
         env_inputs = []

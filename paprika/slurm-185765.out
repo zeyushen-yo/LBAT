@@ -1,0 +1,1923 @@
+Http proxy settings allow access to a very limited and pre-approved list of internet API servers.
+This is documented on Research Computing website. General internet access is not supported.
+Starting array task  (TASK_NUM=5) with AGENT_MODEL_NAME=/scratch/gpfs/zs7353/Qwen2.5-7B-Instruct
+Running task index 5 -> game_env=bandit_bai_fixed_budget env=bandit_bai_fixed_budget judge=bandit_bai_fixed_budget
+INFO 08-28 10:32:07 [__init__.py:235] Automatically detected platform cuda.
+{'seed': 69, 'start_index': 0, 'end_index': -1, 'agent_temperature': 0.7, 'agent_top_p': 1.0, 'agent_max_n_tokens': 128, 'agent_model_supports_system_message': True, 'env_temperature': 0.0, 'env_top_p': 1.0, 'env_max_n_tokens': 1024, 'judge_temperature': 0.0, 'judge_top_p': 1.0, 'judge_max_n_tokens': 128, 'temperature_threshold': 0.2, 'min_p_choice': 0.3, 'num_max_env_response_generations': 5, 'num_max_agent_response_generations': 10, 'num_trajectories_per_game_scenario': 4, 'terminate_at_first_agent_failure': True, 'curriculum_file': None, 'curriculum_round': -1, 'curriculum': None, 'repo_dir': '/home/zs7353/LBAT/paprika', 'save_dir': '/home/zs7353/LBAT/paprika/exploration_datasets/bandit_best_arm_identification_fixed_sampling_budget_datasets/llm_evaluation_on_bandit_best_arm_identification_fixed_sampling_budget_split_eval_agent__scratch_gpfs_zs7353_Qwen2.5-7B-Instruct_env_None_judge_None', 'save_file': '/home/zs7353/LBAT/paprika/exploration_datasets/bandit_best_arm_identification_fixed_sampling_budget_datasets/llm_evaluation_on_bandit_best_arm_identification_fixed_sampling_budget_split_eval_agent__scratch_gpfs_zs7353_Qwen2.5-7B-Instruct_env_None_judge_None/llm_evaluation_trajectories_agent__scratch_gpfs_zs7353_Qwen2.5-7B-Instruct_env_None_judge_None_eval_0_-1_seed_69.json', 'agent': {'model_name': '/scratch/gpfs/zs7353/Qwen2.5-7B-Instruct', 'model_type': 'huggingface_models', 'base_model_name': 'Qwen/Qwen2.5-7B-Instruct', 'model_max_length': 32000, 'model_name_summary': 'Qwen2.5-7B-Instruct/Mistral-7B-Instruct-v0.3', 'tokenizer_name': '/scratch/gpfs/zs7353/Qwen2.5-7B-Instruct', 'save_file_name': '_scratch_gpfs_zs7353_Qwen2.5-7B-Instruct', 'finetuned_tokenizer': False, 'use_flash_attention': True}, 'env': {'model_name': 'bandit_bai_fixed_budget', 'model_type': 'bandit_bai_fixed_budget_inference_engine', 'difficulty': 'easy', 'randomize_arm_probabilities': True, 'base_model_name': None, 'model_max_length': 131072, 'model_name_summary': None, 'tokenizer_name': None, 'save_file_name': None, 'finetuned_tokenizer': None}, 'game_env': {'environment_name': 'bandit_best_arm_identification_fixed_sampling_budget', 'data_type': 'eval'}, 'judge': {'model_name': 'bandit_bai_fixed_budget', 'model_type': 'bandit_bai_fixed_budget_inference_engine', 'difficulty': 'easy', 'randomize_arm_probabilities': True, 'base_model_name': None, 'model_max_length': 131072, 'model_name_summary': None, 'tokenizer_name': None, 'save_file_name': None, 'finetuned_tokenizer': None}}
+
+Loading model:  /scratch/gpfs/zs7353/Qwen2.5-7B-Instruct 
+
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 101.22it/s]
+Padding side for generation should be left.
+Setting padding side to left.
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Using 1 GPUs.
+
+
+Will save output to:  /home/zs7353/LBAT/paprika/exploration_datasets/bandit_best_arm_identification_fixed_sampling_budget_datasets/llm_evaluation_on_bandit_best_arm_identification_fixed_sampling_budget_split_eval_agent__scratch_gpfs_zs7353_Qwen2.5-7B-Instruct_env_None_judge_None/llm_evaluation_trajectories_agent__scratch_gpfs_zs7353_Qwen2.5-7B-Instruct_env_None_judge_None_eval_0_-1_seed_69.json 
+
+
+Scenario:  1
+Game scenario index:  0 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  2
+Game scenario index:  1 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  3
+Game scenario index:  2 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  4
+Game scenario index:  3 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  5
+Game scenario index:  4 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  6
+Game scenario index:  5 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  7
+Game scenario index:  6 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  8
+Game scenario index:  7 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  9
+Game scenario index:  8 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  10
+Game scenario index:  9 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  11
+Game scenario index:  10 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  12
+Game scenario index:  11 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  13
+Game scenario index:  12 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  14
+Game scenario index:  13 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  15
+Game scenario index:  14 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  16
+Game scenario index:  15 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  17
+Game scenario index:  16 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  18
+Game scenario index:  17 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  19
+Game scenario index:  18 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  20
+Game scenario index:  19 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  21
+Game scenario index:  20 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  22
+Game scenario index:  21 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  23
+Game scenario index:  22 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  24
+Game scenario index:  23 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  25
+Game scenario index:  24 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  26
+Game scenario index:  25 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  27
+Game scenario index:  26 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  28
+Game scenario index:  27 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  29
+Game scenario index:  28 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  30
+Game scenario index:  29 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  31
+Game scenario index:  30 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  32
+Game scenario index:  31 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  33
+Game scenario index:  32 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  34
+Game scenario index:  33 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  35
+Game scenario index:  34 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  36
+Game scenario index:  35 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  37
+Game scenario index:  36 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  38
+Game scenario index:  37 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  39
+Game scenario index:  38 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  40
+Game scenario index:  39 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  41
+Game scenario index:  40 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  42
+Game scenario index:  41 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  43
+Game scenario index:  42 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  44
+Game scenario index:  43 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  45
+Game scenario index:  44 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  46
+Game scenario index:  45 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  47
+Game scenario index:  46 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  48
+Game scenario index:  47 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  49
+Game scenario index:  48 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  50
+Game scenario index:  49 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  51
+Game scenario index:  50 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  52
+Game scenario index:  51 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  53
+Game scenario index:  52 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  54
+Game scenario index:  53 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  55
+Game scenario index:  54 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  56
+Game scenario index:  55 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  57
+Game scenario index:  56 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  58
+Game scenario index:  57 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  59
+Game scenario index:  58 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  60
+Game scenario index:  59 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  61
+Game scenario index:  60 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  62
+Game scenario index:  61 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  63
+Game scenario index:  62 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  64
+Game scenario index:  63 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  65
+Game scenario index:  64 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  66
+Game scenario index:  65 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  67
+Game scenario index:  66 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  68
+Game scenario index:  67 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  69
+Game scenario index:  68 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  70
+Game scenario index:  69 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  71
+Game scenario index:  70 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  72
+Game scenario index:  71 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  73
+Game scenario index:  72 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  74
+Game scenario index:  73 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  75
+Game scenario index:  74 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  76
+Game scenario index:  75 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  77
+Game scenario index:  76 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  78
+Game scenario index:  77 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  79
+Game scenario index:  78 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  80
+Game scenario index:  79 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  81
+Game scenario index:  80 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  82
+Game scenario index:  81 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  83
+Game scenario index:  82 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  84
+Game scenario index:  83 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  85
+Game scenario index:  84 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  86
+Game scenario index:  85 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  87
+Game scenario index:  86 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  88
+Game scenario index:  87 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  89
+Game scenario index:  88 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  90
+Game scenario index:  89 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  91
+Game scenario index:  90 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  92
+Game scenario index:  91 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  93
+Game scenario index:  92 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  94
+Game scenario index:  93 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  95
+Game scenario index:  94 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  96
+Game scenario index:  95 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  97
+Game scenario index:  96 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  98
+Game scenario index:  97 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  99
+Game scenario index:  98 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Scenario:  100
+Game scenario index:  99 
+
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+The inference engine has been reset to the start state!
+
+Saving output to:  /home/zs7353/LBAT/paprika/exploration_datasets/bandit_best_arm_identification_fixed_sampling_budget_datasets/llm_evaluation_on_bandit_best_arm_identification_fixed_sampling_budget_split_eval_agent__scratch_gpfs_zs7353_Qwen2.5-7B-Instruct_env_None_judge_None/llm_evaluation_trajectories_agent__scratch_gpfs_zs7353_Qwen2.5-7B-Instruct_env_None_judge_None_eval_0_-1_seed_69.json 
+

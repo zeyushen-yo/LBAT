@@ -1,0 +1,58 @@
+seed: 69
+start_index: 0
+end_index: -1
+agent_temperature: 0.7
+agent_top_p: 1.0
+agent_max_n_tokens: 512
+agent_model_supports_system_message: true
+env_temperature: 0.0
+env_top_p: 1.0
+env_max_n_tokens: 1024
+judge_temperature: 0.0
+judge_top_p: 1.0
+judge_max_n_tokens: 128
+temperature_threshold: 0.2
+min_p_choice: 0.3
+num_max_env_response_generations: 5
+num_max_agent_response_generations: 10
+num_trajectories_per_game_scenario: 4
+terminate_at_first_agent_failure: true
+curriculum_file: null
+curriculum_round: -1
+curriculum: null
+repo_dir: ???
+save_dir: /home/zs7353/LBAT/paprika/exploration_datasets/${game_env.environment_name}_datasets/llm_evaluation_on_${game_env.environment_name}_split_${game_env.data_type}_agent_${agent.save_file_name}_env_${env.save_file_name}_judge_${judge.save_file_name}
+save_file: ${save_dir}/llm_evaluation_trajectories_agent_${agent.save_file_name}_env_${env.save_file_name}_judge_${judge.save_file_name}_${game_env.data_type}_${start_index}_${end_index}_seed_${seed}.json
+agent:
+  model_name: /scratch/gpfs/zs7353/Llama-3.1-8B-Instruct
+  model_type: vllm_models
+  base_model_name: /scratch/gpfs/zs7353/Llama-3.1-8B-Instruct
+  model_max_length: 20000
+  model_name_summary: Meta-Llama-3.1-8B-Instruct/Meta-Llama-3.1-8B-Instruct
+  tokenizer_name: /scratch/gpfs/zs7353/Llama-3.1-8B-Instruct
+  save_file_name: _scratch_gpfs_zs7353_Llama-3.1-8B-Instruct
+  finetuned_tokenizer: false
+  use_flash_attention: true
+env:
+  model_name: mastermind
+  model_type: mastermind_inference_engine
+  mode: env
+  base_model_name: null
+  model_max_length: 131072
+  model_name_summary: null
+  tokenizer_name: null
+  save_file_name: null
+  finetuned_tokenizer: null
+game_env:
+  environment_name: mastermind
+  data_type: eval
+judge:
+  model_name: mastermind
+  model_type: mastermind_inference_engine
+  mode: judge
+  base_model_name: null
+  model_max_length: 131072
+  model_name_summary: null
+  tokenizer_name: null
+  save_file_name: null
+  finetuned_tokenizer: null

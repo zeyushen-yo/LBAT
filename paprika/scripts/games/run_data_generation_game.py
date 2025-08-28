@@ -291,6 +291,15 @@ def main(config: DictConfig):
             verifier_input_generator = game_environment.get_verifier_input_generator()
 
             # Run the game through the simulator
+            # Set per-task agent max token limits
+            env_name = config["game_env"]["environment_name"]
+            if env_name in ("twenty_questions", "twenty_questions_cot"):
+                task_agent_max_n_tokens = 128
+            elif env_name == "guess_my_city":
+                task_agent_max_n_tokens = 512
+            else:
+                task_agent_max_n_tokens = 1024
+
             record = game.run_one_iteration(
                 agent_game_scenario=game_scenarios[game_scenario_index]["agent"],
                 env_game_scenario=game_scenarios[game_scenario_index]["env"],
@@ -304,7 +313,7 @@ def main(config: DictConfig):
                     temperature_threshold=config["temperature_threshold"],
                     min_p_choice=config["min_p_choice"],
                 ),
-                agent_max_n_tokens=config["agent_max_n_tokens"],
+                agent_max_n_tokens=task_agent_max_n_tokens,
                 env_temperature=config["env_temperature"],
                 env_top_p=config["env_top_p"],
                 env_min_p=get_min_p_from_temperature(

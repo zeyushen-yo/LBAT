@@ -1,8 +1,9 @@
 conda activate paprika
 
-AGENT="llama-3.1-8b-instruct"
+# AGENT=llama-3.1-8b-instruct
+AGENT=qwen2.5-7B-Instruct
 
-MODEL_MAX_LENGTH=20000
+MODEL_MAX_LENGTH=32000
 
 # Pick whichever task to run inference on
 # Can have values between 0 and 9; set to -1 to run ALL environments

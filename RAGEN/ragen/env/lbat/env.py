@@ -267,7 +267,7 @@ class LBATEnv(BaseDiscreteActionEnv, gym.Env):
                 "You need to solve a decision-making problem. In each iteration you must choose exactly one of the available arms. "
                 "After pulling an arm you observe a stochastic reward drawn from that arm’s unknown distribution. Your objective is to maximise the total reward over the horizon. "
                 "Wrap your choice in <answer></answer> tags, e.g. <answer>1</answer> if you choose the first arm. "
-                "Be succinct in your reasoning, and do not try to apply any specific algorithms."
+                "Be concise but include the key steps. Do not use specific algorithms."
             )
             lines.append(f"This instance has {self.num_arms} arms, and in each round, you need to pull one of the arms.")
             if self.type == "beta-bernoulli":
@@ -322,7 +322,7 @@ class LBATEnv(BaseDiscreteActionEnv, gym.Env):
                 "You face a prediction-with-expert-advice problem. In each round, experts output probabilities for a binary label, and you must output a probability for y=1. "
                 "In each round, the expert forecasts will be listed in a fixed order, e.g. [0.1, 0.2] means the first expert predicts 0.1 and the second expert predicts 0.2. Some experts may be more accurate than others. "
                 "Output an integer index of the probability bucket from 0..10, where k means probability k/10. Wrap your answer in <answer></answer>, e.g. <answer>6</answer> if your estimated probability is 0.6. "
-                "Be succinct in your reasoning, and do not try to apply any specific algorithms."
+                "Be concise but include the key steps. Do not use specific algorithms."
             )
             lines.append(f"This instance has {self.num_experts} experts and horizon {self.horizon}.")
             for i, (kappa, bias) in enumerate(zip(self.expert_kappa, self.expert_bias)):
@@ -356,7 +356,7 @@ class LBATEnv(BaseDiscreteActionEnv, gym.Env):
                 "You face an online portfolio selection problem. In each round, allocate a unit budget across d assets using a weight vector w that sums to 1 (w_i ≥ 0). "
                 "In each round, the gross returns for each asset will be listed in a fixed order, e.g. [0.01, 0.02] means the first asset returns 0.01 and the second asset returns 0.02. "
                 "Format your answer as a comma-separated vector inside <answer></answer>, e.g., <answer>0.2, 0.3, 0.5</answer> for d=3. "
-                "Be succinct in your reasoning, and do not try to apply any specific algorithms."
+                "Be concise but include the key steps. Do not use specific algorithms."
             )
             lines.append(f"This instance has {self.num_assets} assets and horizon {self.horizon}.")
             self.action_names = []
@@ -475,7 +475,7 @@ class LBATEnv(BaseDiscreteActionEnv, gym.Env):
             d = self.num_assets
             w = _parse_weights(action, d)
             if w is None:
-                return -1.0
+                return 0.0
             assert self._ops_returns is not None, "OPS returns not pre-sampled"
             x = np.asarray(self._ops_returns[t], dtype=float)
             denom = max(1e-12, float(np.dot(w, x)))
@@ -518,9 +518,9 @@ class LBATEnv(BaseDiscreteActionEnv, gym.Env):
         self.current_step += 1
         if self.family == 'ops':
             reward = self.compute_step_reward(action)
-            valid = bool(reward > -1.0)
+            valid = bool(reward > 0.0)
             msg_head = ("You provided a portfolio allocation vector and received reward "
-                        f"{reward:.4f}.\n") if valid else "Your allocation was invalid and will be penalized."
+                        f"{reward:.4f}.\n") if valid else "Your allocation was invalid and receives zero reward."
         else:
             try:
                 action = int(action)
@@ -529,8 +529,8 @@ class LBATEnv(BaseDiscreteActionEnv, gym.Env):
                 action = -1
             # validate
             if action < 0 or action >= self.ACTION_SPACE.n:
-                reward = -1.0
-                msg_head = "You failed to take a valid action and will be penalized."
+                reward = 0.0
+                msg_head = "You failed to take a valid action and receives zero reward."
             else:
                 reward = self.compute_step_reward(action)
                 msg_head = f"You took action {action} and received reward {reward:.4f}.\n"
@@ -558,7 +558,7 @@ class LBATEnv(BaseDiscreteActionEnv, gym.Env):
                 else:
                     extra = ""
                 observation = msg_head + extra + "Choose your next action."
-                info = {"cumulative_reward": self.cumulative_reward, "action_is_valid": bool(reward > -1.0)}
+                info = {"cumulative_reward": self.cumulative_reward, "action_is_valid": bool(reward > 0.0)}
             else:
                 observation = msg_head + ("Choose your next action.")
                 info = {"cumulative_reward": self.cumulative_reward, "action_is_valid": 0 <= action < self.ACTION_SPACE.n}

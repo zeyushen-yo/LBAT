@@ -700,9 +700,9 @@ class RayAgentTrainer(VerlRayPPOTrainer):
                 # batch = batch.union(gen_batch_output)
 
                 # NOTE reward normalization already done in ctx_manager, so set group size = 1 here
-                batch.non_tensor_batch["uid"] = np.array([str(uuid.uuid4()) for _ in range(len(batch.batch))],
-                                                            dtype=object)
-                # batch.non_tensor_batch["uid"] = batch.non_tensor_batch["group_ids"]
+                # batch.non_tensor_batch["uid"] = np.array([str(uuid.uuid4()) for _ in range(len(batch.batch))],
+                #                                             dtype=object)
+                batch.non_tensor_batch["uid"] = batch.non_tensor_batch["group_ids"]
 
                 # batch.batch["response_mask"] = compute_response_mask(batch)
                 batch.batch["response_mask"] = batch.batch["loss_mask"]

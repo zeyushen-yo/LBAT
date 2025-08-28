@@ -2,14 +2,14 @@ custom_envs:
   UnderspecifiedBandit:
     env_type: underspecified_bandit
     max_actions_per_traj: 20 # maximum total number of actions throughout the trajectory, not single turn
-    env_instruction: "You are solving a general decision-making problem."
+    env_instruction: "You are solving a decision making under uncertainty problem."
     max_tokens: 128
     env_config: {}
 
   LBAT:
     env_type: lbat
     max_actions_per_traj: 20 # maximum total number of actions throughout the trajectory, not single turn
-    env_instruction: "You are solving a general decision-making problem."
+    env_instruction: "You are solving a decision making under uncertainty problem."
     max_tokens: 128
     env_config: {}
 

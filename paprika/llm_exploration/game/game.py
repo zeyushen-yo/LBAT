@@ -625,7 +625,23 @@ class GameSimulator:
 
             # Agent gave no valid response
             if not agent_response_dict["got_valid_llm_generation"]:
-                return None
+                print("Agent failed to produce a valid response after max attempts. Logging as failure.")
+                rewards = self.env.get_rewards()
+                return {
+                    "agent_game_scenario": agent_game_scenario,
+                    "env_game_scenario": env_game_scenario,
+                    "goal_reached": False,
+                    "judge_label": True,
+                    "num_turns": turn,
+                    "max_turns": max_turns,
+                    "env_first_message": env_first_message,
+                    "conversation": agent_conv.to_openai_api_messages(),
+                    "env_conversation": env_conv.to_openai_api_messages(),
+                    "judge_conversation": None,
+                    "rewards": rewards,
+                    "invalid_trajectory": True,
+                    "failure_reason": "agent_no_valid_response",
+                }
 
             agent_action = agent_response_dict["response"]
             extracted_agent_response = agent_response_dict["extracted_response"]
@@ -651,6 +667,7 @@ class GameSimulator:
             #  Strict filtering to ensure no environment hacking
             if not env_response_dict["got_valid_llm_generation"]:
                 env_response = env_response_dict["response"]
+                print("Environment generation invalid; substituting default. Raw env response:", env_response)
                 assert env_default_response is not None
                 extracted_env_response = env_default_response
 
@@ -675,6 +692,7 @@ class GameSimulator:
 
                 if not judge_label_env:
                     env_response = env_response_dict["response"]
+                    print("Environment response rejected by judge; substituting default. Raw env response:", env_response)
                     assert env_default_response is not None
                     extracted_env_response = env_default_response
 
@@ -835,8 +853,12 @@ class GameSimulator:
                     got_valid_llm_response = True
                     break
 
-                except:
-                    print("Did not get valid response from the agent, trying again.")
+                except Exception as e:
+                    print("Did not get valid response; trying again. Error:", repr(e))
+                    try:
+                        print("Raw LLM generation: ", llm_generation)
+                    except Exception as inner_e:
+                        print("Could not display raw LLM generation due to:", repr(inner_e))
 
             return {
                 "got_valid_llm_generation": got_valid_llm_response,
