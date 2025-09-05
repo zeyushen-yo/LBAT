@@ -4,7 +4,7 @@
 #SBATCH --ntasks=1
 #SBATCH --mem=64G  
 #SBATCH --gres=gpu:1
-#SBATCH --time=24:00:00  
+#SBATCH --time=48:00:00  
 #SBATCH --partition=pli-c
 #SBATCH --mail-type=begin       
 #SBATCH --mail-type=end         
@@ -29,8 +29,9 @@ fi
 if [ -z "${AGENT_MODEL_NAME:-}" ]; then
     # export AGENT_MODEL_NAME="/scratch/gpfs/zs7353/ragen/lbat-grpo_kl/global_step_200/actor/huggingface"
     # export AGENT_MODEL_NAME="/scratch/gpfs/zs7353/Llama-3.1-8B-Instruct"
-    # export AGENT_MODEL_NAME="/scratch/gpfs/zs7353/ragen/lbat-grpo_baseline_kl/global_step_200/actor/merged_hf"
-    export AGENT_MODEL_NAME="/scratch/gpfs/zs7353/Qwen2.5-7B-Instruct"
+    export AGENT_MODEL_NAME="/scratch/gpfs/zs7353/ragen/lbat-grpo_qwen_3/global_step_200/actor/merged_hf"
+    # export AGENT_MODEL_NAME="/scratch/gpfs/zs7353/ragen/lbat-grpo_qwen_2/global_step_100/actor/merged_hf"
+    # export AGENT_MODEL_NAME="/scratch/gpfs/zs7353/Qwen2.5-7B-Instruct"
 fi
 
 cd /home/zs7353/LBAT/paprika/scripts/bash_scripts

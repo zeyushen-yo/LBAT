@@ -475,7 +475,7 @@ class LBATEnv(BaseDiscreteActionEnv, gym.Env):
             d = self.num_assets
             w = _parse_weights(action, d)
             if w is None:
-                return 0.0
+                return -1.0
             assert self._ops_returns is not None, "OPS returns not pre-sampled"
             x = np.asarray(self._ops_returns[t], dtype=float)
             denom = max(1e-12, float(np.dot(w, x)))
@@ -518,9 +518,9 @@ class LBATEnv(BaseDiscreteActionEnv, gym.Env):
         self.current_step += 1
         if self.family == 'ops':
             reward = self.compute_step_reward(action)
-            valid = bool(reward > 0.0)
+            valid = bool(reward >= 0.0)
             msg_head = ("You provided a portfolio allocation vector and received reward "
-                        f"{reward:.4f}.\n") if valid else "Your allocation was invalid and receives zero reward."
+                        f"{reward:.4f}.\n") if valid else "You output was invalid and receives negative reward."
         else:
             try:
                 action = int(action)
@@ -529,8 +529,8 @@ class LBATEnv(BaseDiscreteActionEnv, gym.Env):
                 action = -1
             # validate
             if action < 0 or action >= self.ACTION_SPACE.n:
-                reward = 0.0
-                msg_head = "You failed to take a valid action and receives zero reward."
+                reward = -1.0
+                msg_head = "You output was invalid and receives negative reward."
             else:
                 reward = self.compute_step_reward(action)
                 msg_head = f"You took action {action} and received reward {reward:.4f}.\n"
@@ -558,7 +558,7 @@ class LBATEnv(BaseDiscreteActionEnv, gym.Env):
                 else:
                     extra = ""
                 observation = msg_head + extra + "Choose your next action."
-                info = {"cumulative_reward": self.cumulative_reward, "action_is_valid": bool(reward > 0.0)}
+                info = {"cumulative_reward": self.cumulative_reward, "action_is_valid": bool(reward >= 0.0)}
             else:
                 observation = msg_head + ("Choose your next action.")
                 info = {"cumulative_reward": self.cumulative_reward, "action_is_valid": 0 <= action < self.ACTION_SPACE.n}

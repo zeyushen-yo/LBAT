@@ -1,6 +1,9 @@
 defaults:
   - base
 
+micro_batch_size_per_gpu: 1
+ppo_mini_batch_size: 16
+
 system:
   CUDA_VISIBLE_DEVICES: "0,1,2,3"
 
@@ -8,6 +11,7 @@ actor_rollout_ref:
   rollout:
     response_length: 128
     tensor_model_parallel_size: 4
+    gpu_memory_utilization: 0.40 # for A100
     val_kwargs:
       do_sample: True
       temperature: 0.5
@@ -15,6 +19,7 @@ actor_rollout_ref:
 trainer:
   experiment_name: lbat-base
   n_gpus_per_node: 4
+  print_token_advantages: True
 
 agent_proxy:
   max_turn: 20

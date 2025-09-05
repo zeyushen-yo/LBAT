@@ -87,7 +87,7 @@ AGENT_TEMPERATURE=0.7
 SEED=69   
 
 # Num trajectories per task (e.g., a single secret topic in 20 questions) to be generated
-NUM_TRAJECTORIES_PER_GAME_SCENARIO=4
+NUM_TRAJECTORIES_PER_GAME_SCENARIO=1
 
 # Modify the path here to reflect where the paprika directory is located
 cd /home/zs7353/LBAT/paprika

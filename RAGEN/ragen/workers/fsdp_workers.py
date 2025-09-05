@@ -876,11 +876,11 @@ class CriticWorker(Worker):
             critic_module.enable_input_require_grads()
             # Convert config to regular Python types before creating PEFT model
             lora_config = {
-                'task_type': TaskType.CAUSAL_LM,
-                'r': self.config.model.lora_rank,
-                'lora_alpha': self.config.model.lora_alpha,
-                'target_modules': convert_to_regular_types(self.config.model.target_modules),
-                'bias': "none",
+                "task_type": TaskType.TOKEN_CLS,
+                "r": self.config.model.lora_rank,
+                "lora_alpha": self.config.model.lora_alpha,
+                "target_modules": convert_to_regular_types(self.config.model.target_modules),
+                "bias": "none",
             }
             critic_module = get_peft_model(critic_module, LoraConfig(**lora_config))
 

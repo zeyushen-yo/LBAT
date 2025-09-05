@@ -801,6 +801,43 @@ class RayAgentTrainer(VerlRayPPOTrainer):
                     advantages = advantages / response_relative_lengths.unsqueeze(-1) 
                     batch.batch["advantages"] = advantages
 
+                # Optional debug print: per-token decoded tokens with advantages
+                try:
+                    if getattr(self.config.trainer, "print_token_advantages", False):
+                        advantages = batch.batch.get("advantages")
+                        responses = batch.batch.get("responses")
+                        response_mask = batch.batch.get("response_mask")
+                        if advantages is not None and responses is not None:
+                            # Ensure CPU tensors for printing
+                            adv_cpu = advantages.detach().cpu()
+                            resp_cpu = responses.detach().cpu()
+                            bsz, resp_len = resp_cpu.shape
+                            # Align mask to response length if provided
+                            mask_cpu = None
+                            if response_mask is not None:
+                                rm = response_mask.detach().cpu()
+                                if rm.shape[1] != resp_len:
+                                    rm = rm[:, -resp_len:]
+                                mask_cpu = rm
+                            # Print all sequences and tokens
+                            for i in range(bsz):
+                                token_ids = resp_cpu[i].tolist()
+                                adv_vals = adv_cpu[i].tolist()
+                                if mask_cpu is not None:
+                                    mask_vals = mask_cpu[i].tolist()
+                                else:
+                                    mask_vals = [1] * len(token_ids)
+                                print(f"[debug] seq={i} per-token advantages:")
+                                for tid, adv_val, m in zip(token_ids, adv_vals, mask_vals):
+                                    if m:
+                                        try:
+                                            tok_str = self.tokenizer.decode([int(tid)], skip_special_tokens=False)
+                                            print(f"  token='{tok_str}' advantage={float(adv_val):.6f}")
+                                        except Exception as e2:
+                                            print(f"  token decode error: {e2}")
+                except Exception as e:
+                    print(f"Error printing per-token advantages: {e}")
+
                 # update critic
                 if self.use_critic:
                     with _timer("update_critic", timing_raw):

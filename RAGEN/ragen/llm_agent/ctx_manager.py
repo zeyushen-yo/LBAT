@@ -1,8 +1,3 @@
-"""
-This is the context manager for the LLM agent.
-author: Kangrui Wang, Zihan Wang
-date: 2025-03-30
-"""
 from itertools import zip_longest
 
 import torch
@@ -22,16 +17,94 @@ from dataclasses import asdict
 register_resolvers()
 
 def get_special_tokens(tokenizer: AutoTokenizer):
-    if "qwen" in tokenizer.name_or_path.lower():
-        special_token = tokenizer.encode("<|im_start|>")[0]
-        reward_token = tokenizer.encode("<|im_end|>")[0]
-    elif "llama-3" in tokenizer.name_or_path.lower():
-        special_token = 128006
-        reward_token = 128009
+    name = tokenizer.name_or_path.lower()
+    if "qwen" in name:
+        special_token = tokenizer.convert_tokens_to_ids("<|im_start|>")
+        reward_token  = tokenizer.convert_tokens_to_ids("<|im_end|>")
+    elif "llama" in name:
+        # Not used for Llama masking anymore, but keep for completeness
+        special_token = tokenizer.convert_tokens_to_ids("<|start_header_id|>")
+        reward_token  = tokenizer.convert_tokens_to_ids("<|end_header_id|>")
     else:
         raise ValueError(f"Unsupported model: {tokenizer.name_or_path}")
+    if special_token in (None, tokenizer.unk_token_id) or reward_token in (None, tokenizer.unk_token_id):
+        raise ValueError("Special tokens not found in tokenizer.")
     return special_token, reward_token
 
+def _last_true_index(mask: torch.Tensor) -> torch.Tensor:
+    """
+    Return index of the last True in each row of a boolean mask.
+    If a row has no True, returns 0 for that row.
+    Works on CPU/GPU and avoids argmax on bool dtype.
+    mask: (B, L) bool
+    returns: (B,) int64
+    """
+    mask_i64 = mask.to(dtype=torch.int64)
+    cm = mask_i64.cumsum(dim=-1)
+    totals = mask_i64.sum(dim=-1, keepdim=True)
+    is_last = (cm == totals).to(dtype=torch.int64)  # 1 where last True sits, else 0
+    return is_last.argmax(dim=-1)
+
+def _llama_special_ids(tokenizer):
+    sid = tokenizer.convert_tokens_to_ids("<|start_header_id|>")
+    eid = tokenizer.convert_tokens_to_ids("<|end_header_id|>")
+    eot = tokenizer.convert_tokens_to_ids("<|eot_id|>")
+    if any(x is None or x == tokenizer.unk_token_id for x in (sid, eid, eot)):
+        raise ValueError("Llama special tokens not found in tokenizer.")
+    return sid, eid, eot
+
+@torch.no_grad()
+def _build_llama_role_masks(input_ids: torch.Tensor, tokenizer) -> Dict[str, torch.Tensor]:
+    """
+    Marks assistant content spans strictly from <|end_header_id|>+1 to <|eot_id|> (inclusive)
+    for headers whose role text is 'assistant'. Also returns header_mask and eot_mask.
+    """
+    B, L = input_ids.shape
+    device = input_ids.device
+    sid, eid, eot = _llama_special_ids(tokenizer)
+
+    is_sid = (input_ids == sid)
+    is_eid = (input_ids == eid)
+    is_eot = (input_ids == eot)
+
+    header_mask   = torch.zeros_like(input_ids, dtype=torch.bool, device=device)
+    assistant_mask = torch.zeros_like(input_ids, dtype=torch.bool, device=device)
+
+    for b in range(B):
+        starts = is_sid[b].nonzero(as_tuple=False).squeeze(-1).tolist()
+        ends   = is_eid[b].nonzero(as_tuple=False).squeeze(-1).tolist()
+        eots   = is_eot[b].nonzero(as_tuple=False).squeeze(-1).tolist()
+        end_ptr = 0
+        eot_ptr = 0
+        for s in starts:
+            while end_ptr < len(ends) and ends[end_ptr] <= s:
+                end_ptr += 1
+            if end_ptr >= len(ends): break
+            e_hdr = ends[end_ptr]
+            header_mask[b, s:e_hdr+1] = True
+
+            # decode role string between start/end header ids
+            role_txt = tokenizer.decode(input_ids[b, s+1:e_hdr].tolist()).strip().lower()
+
+            # find the next eot after this header
+            while eot_ptr < len(eots) and eots[eot_ptr] <= e_hdr:
+                eot_ptr += 1
+            if eot_ptr >= len(eots):
+                span_end = L - 1
+            else:
+                span_end = eots[eot_ptr]  # INCLUDE EOT
+
+            span_start = min(e_hdr + 1, L - 1)
+
+            print("role_txt: ", role_txt)
+            if role_txt.startswith("assistant"):
+                assistant_mask[b, span_start:span_end+1] = True
+
+    return {
+        "header_mask": header_mask,        # only header tokens
+        "assistant_mask": assistant_mask,  # includes <|eot_id|>
+        "eot_mask": (input_ids == eot),
+    }
 
 def place_per_turn_rewards(input_ids, turn_indicators, all_scores, tokenizer,
                            special_token, reward_token):
@@ -46,42 +119,90 @@ def place_per_turn_rewards(input_ids, turn_indicators, all_scores, tokenizer,
 
     # Assistant spans are odd indices >= 3 (system=1, user=2, assistant=3, user=4, assistant=5, ...)
     is_assistant_span = (turn_indicators % 2 == 1) & (turn_indicators > 1)
-    not_special = (input_ids != special_token) & (input_ids != reward_token)
-    if "llama-3" in tokenizer.name_or_path.lower():
-        END_HEADER_ID = 128007
-        not_special = not_special & (input_ids != END_HEADER_ID)
+    header_mask = (input_ids == special_token) | (input_ids == reward_token)
 
-    # Max assistant turn id present in the batch (3,5,7,...)
+    not_special_body = (~header_mask)
     max_turn_id = int(turn_indicators.max().item())
+
     # all_scores is list over batch of per-turn scalars; zip_longest groups by turn index
     for k, scores_k in enumerate(zip_longest(*all_scores, fillvalue=0.0)):
         turn_id = 3 + 2 * k
         if turn_id > max_turn_id:
             break
 
-        # tokens belonging to this assistant turn
         span_k = is_assistant_span & (turn_indicators == turn_id)
-        # prefer last non-special token in the span
-        body_k = span_k & not_special
+        body_k = span_k & not_special_body
 
-        # find last index in a boolean mask per row: argmax over cumsum==sum
-        # (works even with left padding because we never use pad tokens in span_k)
         def last_true(mask):
-            # mask: (bsz, L) boolean
-            cnt = mask.long().sum(-1, keepdim=True)                  # (bsz,1)
-            csm = mask.long().cumsum(-1)                             # (bsz,L)
-            last = (csm == cnt).long().argmax(-1)                    # (bsz,)
+            cnt = mask.long().sum(-1, keepdim=True)
+            csm = mask.long().cumsum(-1)
+            last = (csm == cnt).long().argmax(-1)
             return last
 
         has_body = body_k.any(-1)
         last_body = last_true(body_k)
         last_span = last_true(span_k)
-        last_idx  = torch.where(has_body, last_body, last_span)      # prefer body, else span end
+        last_idx  = torch.where(has_body, last_body, last_span)
 
         scores_k = torch.tensor(scores_k, dtype=torch.float32, device=device)
         score_tensor.scatter_(1, last_idx.unsqueeze(1), scores_k.unsqueeze(1))
 
     return score_tensor
+
+def get_masks_and_scores_llama(
+    input_ids: torch.Tensor,
+    tokenizer: AutoTokenizer,
+    all_scores: List[List[float]],
+    use_turn_scores: bool = False,
+    debug: bool = False,
+):
+    B, L = input_ids.shape
+    device = input_ids.device
+
+    masks = _build_llama_role_masks(input_ids, tokenizer)
+    response_mask = masks["assistant_mask"].clone()  # learn only assistant content
+    loss_mask     = response_mask.clone()
+    eot_mask      = masks["eot_mask"]
+
+    # scores in sequence space, then shift to label space at the end
+    score_tensor = torch.zeros((B, L), dtype=torch.float32, device=device)
+
+    if use_turn_scores:
+        # place each turn's scalar on that turn's EOT (inside assistant mask)
+        for b in range(B):
+            # EOTs inside assistant spans = one per assistant message
+            turn_eots = (eot_mask[b] & response_mask[b]).nonzero(as_tuple=False).squeeze(-1).tolist()
+            for k, s in enumerate(all_scores[b]):
+                if k < len(turn_eots):
+                    t = turn_eots[k]
+                else:
+                    # fallback: last assistant token if the EOT is missing
+                    asst_pos = (response_mask[b].nonzero(as_tuple=False).squeeze(-1).tolist() or [L-1])
+                    t = asst_pos[-1]
+                score_tensor[b, t] = float(s)
+    else:
+        # single scalar per sequence -> place on *last* assistant token (prefer EOT)
+        seq_scores = torch.tensor([sum(x) for x in all_scores], dtype=torch.float32, device=device)
+        for b in range(B):
+            asst_pos = (response_mask[b].nonzero(as_tuple=False).squeeze(-1)).tolist()
+            if not asst_pos: 
+                continue
+            eots = (eot_mask[b] & response_mask[b]).nonzero(as_tuple=False).squeeze(-1).tolist()
+            t = (eots or asst_pos)[-1]
+            score_tensor[b, t] = seq_scores[b]
+
+    # align to label space
+    score_tensor  = score_tensor[:, 1:]
+    loss_mask     = loss_mask[:, 1:]
+    response_mask = response_mask[:, 1:]
+
+    if debug:
+        bad = (score_tensor.abs() > 0) & (~response_mask.bool())
+        if bool(bad.any()):
+            rows = torch.nonzero(bad.any(-1)).squeeze(-1).tolist()
+            print(f"[SANITY] rewards outside assistant mask at rows: {rows}")
+
+    return score_tensor, loss_mask, response_mask
 
 
 def get_masks_and_scores(input_ids: torch.Tensor, tokenizer: AutoTokenizer, all_scores: List[List[float]] = None, use_turn_scores: bool = False, enable_response_mask: bool = False, debug: bool = False):
@@ -100,6 +221,11 @@ def get_masks_and_scores(input_ids: torch.Tensor, tokenizer: AutoTokenizer, all_
     else:
         loss_mask = (turn_indicators > 1) # learns everything after system prompt
     response_mask = (turn_indicators % 2 == 1) & (turn_indicators > 1)
+
+    header_mask = (input_ids == special_token) | (input_ids == reward_token)
+
+    loss_mask = loss_mask & (~header_mask)
+    response_mask = response_mask & (~header_mask)
     
     score_tensor = torch.zeros_like(input_ids, dtype=torch.float32)
 
@@ -113,13 +239,13 @@ def get_masks_and_scores(input_ids: torch.Tensor, tokenizer: AutoTokenizer, all_
         # we'll place it after slicing, see below
 
     # Align everything to label positions (responses = input_ids[:, 1:])
-    score_tensor  = score_tensor[:, 1:]
-    loss_mask     = loss_mask[:, 1:]
+    score_tensor = score_tensor[:, 1:]
+    loss_mask = loss_mask[:, 1:]
     response_mask = response_mask[:, 1:]
 
     if not use_turn_scores:
         # Put the scalar on the last masked position so it participates in the loss
-        last_masked = (response_mask.cumsum(-1) == response_mask.sum(-1, keepdim=True)).argmax(-1)
+        last_masked = _last_true_index(response_mask)
         score_tensor.zero_()
         score_tensor.scatter_(1, last_masked.unsqueeze(1), seq_scores.unsqueeze(1))
 
@@ -164,6 +290,7 @@ class ContextManager:
                 for n_group, env_tag in zip(self.es_cfg.env_configs.n_groups, self.es_cfg.env_configs.tags)
         }
         self._init_prefix_lookup()
+        self.tokenizer.padding_side = "left"
     
     def _check_env_installed(self, env_type: str):
         if env_type not in REGISTERED_ENV_CONFIGS:
@@ -304,7 +431,7 @@ class ContextManager:
 
         # 3) Re-scatter normalized scalars to the last masked position
         out = torch.zeros_like(score_tensor)
-        last_masked = (response_mask.cumsum(-1) == response_mask.sum(-1, keepdim=True)).argmax(-1)
+        last_masked = _last_true_index(response_mask)
         out.scatter_(1, last_masked.unsqueeze(1), normalized.unsqueeze(1))
         return out
 
@@ -438,14 +565,27 @@ class ContextManager:
                     base_r = float(entry.get("reward", 0.0))
                     step = 0.0
                     if step_cfg and getattr(step_cfg, "enabled", True):
-                        if (not only_pos) or (base_r > 0.0):
+                        only_pos = bool(getattr(step_cfg, "only_if_base_positive", True))
+                        if (not only_pos) or (base_r >= 0.0):
                             if _think_pass(entry):
-                                step = beta * scale
-                                print(f"step: {step}, beta: {beta}, scale: {scale}")
+                                step = float(getattr(step_cfg, "beta", 0.2)) * float(batch_scale)
                     per_turn.append(base_r + step)
                 scores.append(per_turn)
 
-            score_tensor, loss_mask, response_mask = get_masks_and_scores(input_ids, self.tokenizer, scores, use_turn_scores=self.config.agent_proxy.use_turn_scores, enable_response_mask=self.config.enable_response_mask, debug=self.debug_mask_sanity)
+            # score_tensor, loss_mask, response_mask = get_masks_and_scores(input_ids, self.tokenizer, scores, use_turn_scores=self.config.agent_proxy.use_turn_scores, enable_response_mask=self.config.enable_response_mask, debug=self.debug_mask_sanity)
+            if "llama" in self.tokenizer.name_or_path.lower():
+                score_tensor, loss_mask, response_mask = get_masks_and_scores_llama(
+                    input_ids, self.tokenizer, scores,
+                    use_turn_scores=self.config.agent_proxy.use_turn_scores,
+                    debug=self.debug_mask_sanity
+                )
+            else:
+                score_tensor, loss_mask, response_mask = get_masks_and_scores(
+                    input_ids, self.tokenizer, scores,
+                    use_turn_scores=self.config.agent_proxy.use_turn_scores,
+                    enable_response_mask=self.config.enable_response_mask,
+                    debug=self.debug_mask_sanity
+                )
 
             normalized_score_tensor = score_tensor
             if not self.config.agent_proxy.use_turn_scores:
