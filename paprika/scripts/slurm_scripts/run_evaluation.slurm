@@ -4,7 +4,7 @@
 #SBATCH --ntasks=1
 #SBATCH --mem=64G  
 #SBATCH --gres=gpu:1
-#SBATCH --time=48:00:00  
+#SBATCH --time=12:00:00  
 #SBATCH --partition=pli-c
 #SBATCH --mail-type=begin       
 #SBATCH --mail-type=end         
@@ -20,6 +20,10 @@ export VLLM_WORKER_MULTIPROC_METHOD=spawn
 # Ensure Python can import the in-repo paprika package
 export PYTHONPATH=/home/zs7353/LBAT/paprika:$PYTHONPATH
 
+# Set agent here (toggle by commenting/uncommenting)
+# export AGENT=llama-3.1-8b-instruct
+export AGENT=qwen2.5-7B-Instruct
+
 if [ -n "${SLURM_ARRAY_TASK_ID:-}" ] && [ -z "${TASK_NUM:-}" ]; then
     export TASK_NUM="${SLURM_ARRAY_TASK_ID}"
 fi
@@ -27,11 +31,12 @@ fi
 # Set the model to evaluate here so it propagates to the bash script (but allow external override)
 # if AGENT_MODEL_NAME is not set, fall back to a default; otherwise respect the provided value
 if [ -z "${AGENT_MODEL_NAME:-}" ]; then
-    # export AGENT_MODEL_NAME="/scratch/gpfs/zs7353/ragen/lbat-grpo_kl/global_step_200/actor/huggingface"
+    # export AGENT_MODEL_NAME="/scratch/gpfs/zs7353/ragen/lbat-grpo_baseline_llama/global_step_200/actor/merged_hf"
+    # export AGENT_MODEL_NAME="/scratch/gpfs/zs7353/ragen/lbat-grpo_llama/global_step_200/actor/merged_hf"
     # export AGENT_MODEL_NAME="/scratch/gpfs/zs7353/Llama-3.1-8B-Instruct"
-    export AGENT_MODEL_NAME="/scratch/gpfs/zs7353/ragen/lbat-grpo_qwen_3/global_step_200/actor/merged_hf"
-    # export AGENT_MODEL_NAME="/scratch/gpfs/zs7353/ragen/lbat-grpo_qwen_2/global_step_100/actor/merged_hf"
-    # export AGENT_MODEL_NAME="/scratch/gpfs/zs7353/Qwen2.5-7B-Instruct"
+    # export AGENT_MODEL_NAME="/scratch/gpfs/zs7353/ragen/lbat-grpo_baseline_qwen/global_step_200/actor/merged_hf"
+    # export AGENT_MODEL_NAME="/scratch/gpfs/zs7353/ragen/lbat-grpo_qwen/global_step_200/actor/merged_hf"
+    export AGENT_MODEL_NAME="/scratch/gpfs/zs7353/Qwen2.5-7B-Instruct"
 fi
 
 cd /home/zs7353/LBAT/paprika/scripts/bash_scripts

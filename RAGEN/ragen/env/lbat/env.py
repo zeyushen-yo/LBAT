@@ -216,40 +216,87 @@ class LBATEnv(BaseDiscreteActionEnv, gym.Env):
             self._next_params_override = None
         else:
             self.family = str(kwargs.get('family', rng.choice(families)))
-            self.horizon = int(rng.integers(self.config.min_horizon, self.config.max_horizon + 1))
+
+            # Decide ID vs OOD sampling for this episode
+            use_ood = False
+            try:
+                if bool(getattr(self.config, 'ood_enabled', False)):
+                    p = float(getattr(self.config, 'ood_probability', 1.0))
+                    use_ood = bool(rng.random() < p)
+            except Exception as e:
+                print(f"[LBATEnv.reset] OOD flag error: {e}")
+                use_ood = False
+
+            if use_ood:
+                self.horizon = int(rng.integers(self.config.ood_min_horizon, self.config.ood_max_horizon + 1))
+            else:
+                self.horizon = int(rng.integers(self.config.min_horizon, self.config.max_horizon + 1))
 
             if self.family == 'mab':
-                self.num_arms = int(rng.integers(self.config.min_arms, self.config.max_arms + 1))
+                if use_ood:
+                    self.num_arms = int(rng.integers(self.config.ood_min_arms, self.config.ood_max_arms + 1))
+                else:
+                    self.num_arms = int(rng.integers(self.config.min_arms, self.config.max_arms + 1))
                 self.type = rng.choice(self.config.possible_bandit_types)
                 if self.type == "beta-bernoulli":
-                    self.arm_prior_alpha = rng.uniform(self.config.min_alpha, self.config.max_alpha, size=self.num_arms).tolist()
-                    self.arm_prior_beta = rng.uniform(self.config.min_beta, self.config.max_beta, size=self.num_arms).tolist()
-                    self.arm_true_p = rng.uniform(self.config.min_p, self.config.max_p, size=self.num_arms).tolist()
+                    if use_ood:
+                        self.arm_prior_alpha = rng.uniform(self.config.ood_min_alpha, self.config.ood_max_alpha, size=self.num_arms).tolist()
+                        self.arm_prior_beta = rng.uniform(self.config.ood_min_beta, self.config.ood_max_beta, size=self.num_arms).tolist()
+                        self.arm_true_p = rng.uniform(self.config.ood_min_p, self.config.ood_max_p, size=self.num_arms).tolist()
+                    else:
+                        self.arm_prior_alpha = rng.uniform(self.config.min_alpha, self.config.max_alpha, size=self.num_arms).tolist()
+                        self.arm_prior_beta = rng.uniform(self.config.min_beta, self.config.max_beta, size=self.num_arms).tolist()
+                        self.arm_true_p = rng.uniform(self.config.min_p, self.config.max_p, size=self.num_arms).tolist()
                 elif self.type == "gaussian-gaussian":
-                    self.arm_prior_mu = rng.uniform(self.config.min_mu_prior, self.config.max_mu_prior, size=self.num_arms).tolist()
-                    self.arm_prior_sigma = rng.uniform(self.config.min_sigma_prior, self.config.max_sigma_prior, size=self.num_arms).tolist()
-                    self.arm_true_mu = rng.uniform(self.config.min_mu_true, self.config.max_mu_true, size=self.num_arms).tolist()
-                    self.arm_true_sigma = rng.uniform(self.config.min_sigma_true, self.config.max_sigma_true, size=self.num_arms).tolist()
+                    if use_ood:
+                        self.arm_prior_mu = rng.uniform(self.config.ood_min_mu_prior, self.config.ood_max_mu_prior, size=self.num_arms).tolist()
+                        self.arm_prior_sigma = rng.uniform(self.config.ood_min_sigma_prior, self.config.ood_max_sigma_prior, size=self.num_arms).tolist()
+                        self.arm_true_mu = rng.uniform(self.config.ood_min_mu_true, self.config.ood_max_mu_true, size=self.num_arms).tolist()
+                        self.arm_true_sigma = rng.uniform(self.config.ood_min_sigma_true, self.config.ood_max_sigma_true, size=self.num_arms).tolist()
+                    else:
+                        self.arm_prior_mu = rng.uniform(self.config.min_mu_prior, self.config.max_mu_prior, size=self.num_arms).tolist()
+                        self.arm_prior_sigma = rng.uniform(self.config.min_sigma_prior, self.config.max_sigma_prior, size=self.num_arms).tolist()
+                        self.arm_true_mu = rng.uniform(self.config.min_mu_true, self.config.max_mu_true, size=self.num_arms).tolist()
+                        self.arm_true_sigma = rng.uniform(self.config.min_sigma_true, self.config.max_sigma_true, size=self.num_arms).tolist()
                 elif self.type == "poisson-gamma":
-                    self.arm_prior_a = rng.uniform(self.config.min_a, self.config.max_a, size=self.num_arms).tolist()
-                    self.arm_prior_b = rng.uniform(self.config.min_b, self.config.max_b, size=self.num_arms).tolist()
-                    self.arm_true_lambda = rng.uniform(self.config.min_lambda, self.config.max_lambda, size=self.num_arms).tolist()
+                    if use_ood:
+                        self.arm_prior_a = rng.uniform(self.config.ood_min_a, self.config.ood_max_a, size=self.num_arms).tolist()
+                        self.arm_prior_b = rng.uniform(self.config.ood_min_b, self.config.ood_max_b, size=self.num_arms).tolist()
+                        self.arm_true_lambda = rng.uniform(self.config.ood_min_lambda, self.config.ood_max_lambda, size=self.num_arms).tolist()
+                    else:
+                        self.arm_prior_a = rng.uniform(self.config.min_a, self.config.max_a, size=self.num_arms).tolist()
+                        self.arm_prior_b = rng.uniform(self.config.min_b, self.config.max_b, size=self.num_arms).tolist()
+                        self.arm_true_lambda = rng.uniform(self.config.min_lambda, self.config.max_lambda, size=self.num_arms).tolist()
                 else:
                     raise ValueError(f"Unknown bandit type: {self.type}")
 
             elif self.family == 'pea':
-                self.num_experts = int(rng.integers(self.config.pea_min_experts, self.config.pea_max_experts + 1))
-                self.truth_p = float(rng.uniform(self.config.pea_min_truth_p, self.config.pea_max_truth_p))
-                self.expert_kappa = rng.uniform(self.config.pea_min_expert_kappa, self.config.pea_max_expert_kappa, size=self.num_experts).tolist()
-                self.expert_bias = rng.uniform(self.config.pea_min_expert_bias, self.config.pea_max_expert_bias, size=self.num_experts).tolist()
+                if use_ood:
+                    self.num_experts = int(rng.integers(self.config.pea_ood_min_experts, self.config.pea_ood_max_experts + 1))
+                    self.truth_p = float(rng.uniform(self.config.pea_ood_min_truth_p, self.config.pea_ood_max_truth_p))
+                    self.expert_kappa = rng.uniform(self.config.pea_ood_min_expert_kappa, self.config.pea_ood_max_expert_kappa, size=self.num_experts).tolist()
+                    self.expert_bias = rng.uniform(self.config.pea_ood_min_expert_bias, self.config.pea_ood_max_expert_bias, size=self.num_experts).tolist()
+                else:
+                    self.num_experts = int(rng.integers(self.config.pea_min_experts, self.config.pea_max_experts + 1))
+                    self.truth_p = float(rng.uniform(self.config.pea_min_truth_p, self.config.pea_max_truth_p))
+                    self.expert_kappa = rng.uniform(self.config.pea_min_expert_kappa, self.config.pea_max_expert_kappa, size=self.num_experts).tolist()
+                    self.expert_bias = rng.uniform(self.config.pea_min_expert_bias, self.config.pea_max_expert_bias, size=self.num_experts).tolist()
 
             elif self.family == 'ops':
-                self.num_assets = int(rng.integers(self.config.ops_min_assets, self.config.ops_max_assets + 1))
-                self.ops_mu = rng.uniform(self.config.ops_min_mu, self.config.ops_max_mu, size=self.num_assets).tolist()
-                self.ops_sigma = rng.uniform(self.config.ops_min_sigma, self.config.ops_max_sigma, size=self.num_assets).tolist()
-                # random correlation upper entries, then we will PSD-correct
-                num_upper = self.num_assets * (self.num_assets - 1) // 2
-                self.ops_corr_upper = rng.uniform(self.config.ops_min_corr, self.config.ops_max_corr, size=num_upper).tolist()
+                if use_ood:
+                    self.num_assets = int(rng.integers(self.config.ops_ood_min_assets, self.config.ops_ood_max_assets + 1))
+                    self.ops_mu = rng.uniform(self.config.ops_ood_min_mu, self.config.ops_ood_max_mu, size=self.num_assets).tolist()
+                    self.ops_sigma = rng.uniform(self.config.ops_ood_min_sigma, self.config.ops_ood_max_sigma, size=self.num_assets).tolist()
+                    # random correlation upper entries, then we will PSD-correct
+                    num_upper = self.num_assets * (self.num_assets - 1) // 2
+                    self.ops_corr_upper = rng.uniform(self.config.ops_ood_min_corr, self.config.ops_ood_max_corr, size=num_upper).tolist()
+                else:
+                    self.num_assets = int(rng.integers(self.config.ops_min_assets, self.config.ops_max_assets + 1))
+                    self.ops_mu = rng.uniform(self.config.ops_min_mu, self.config.ops_max_mu, size=self.num_assets).tolist()
+                    self.ops_sigma = rng.uniform(self.config.ops_min_sigma, self.config.ops_max_sigma, size=self.num_assets).tolist()
+                    # random correlation upper entries, then we will PSD-correct
+                    num_upper = self.num_assets * (self.num_assets - 1) // 2
+                    self.ops_corr_upper = rng.uniform(self.config.ops_min_corr, self.config.ops_max_corr, size=num_upper).tolist()
             else:
                 raise ValueError(f"Unknown family: {self.family}")
 
@@ -475,7 +522,7 @@ class LBATEnv(BaseDiscreteActionEnv, gym.Env):
             d = self.num_assets
             w = _parse_weights(action, d)
             if w is None:
-                return -1.0
+                return -1.0 # will ultimately be 0; set to -1 here to distinguish from valid actions
             assert self._ops_returns is not None, "OPS returns not pre-sampled"
             x = np.asarray(self._ops_returns[t], dtype=float)
             denom = max(1e-12, float(np.dot(w, x)))
@@ -518,22 +565,26 @@ class LBATEnv(BaseDiscreteActionEnv, gym.Env):
         self.current_step += 1
         if self.family == 'ops':
             reward = self.compute_step_reward(action)
-            valid = bool(reward >= 0.0)
+            valid_flag = bool(reward >= 0.0)
+            reward = max(reward, 0.0)
             msg_head = ("You provided a portfolio allocation vector and received reward "
-                        f"{reward:.4f}.\n") if valid else "You output was invalid and receives negative reward."
+                        f"{reward:.4f}.\n") if valid_flag else "You output was invalid and receives negative reward."
         else:
             try:
                 action = int(action)
             except Exception as e:
                 print(f"action parse error: {e}")
                 action = -1
-            # validate
+            
             if action < 0 or action >= self.ACTION_SPACE.n:
-                reward = -1.0
-                msg_head = "You output was invalid and receives negative reward."
+                reward = 0.0
+                valid_flag = False
+                msg_head = "Your output was invalid and receives negative reward." # negative rewrard will be applied in context manager
             else:
                 reward = self.compute_step_reward(action)
+                valid_flag = True
                 msg_head = f"You took action {action} and received reward {reward:.4f}.\n"
+
 
         self.cumulative_reward += float(reward)
         terminated = self.current_step >= self.horizon
@@ -548,7 +599,7 @@ class LBATEnv(BaseDiscreteActionEnv, gym.Env):
                 else:
                     extra = ""
                 observation = msg_head + extra + "Choose your next action."
-                info = {"cumulative_reward": self.cumulative_reward, "action_is_valid": 0 <= action < self.ACTION_SPACE.n}
+                info = {"cumulative_reward": self.cumulative_reward, "action_is_valid": valid_flag}
             elif self.family == 'ops':
                 # Reveal previous round returns at the start of each round
                 t_prev = int(self.current_step - 1)
@@ -558,10 +609,10 @@ class LBATEnv(BaseDiscreteActionEnv, gym.Env):
                 else:
                     extra = ""
                 observation = msg_head + extra + "Choose your next action."
-                info = {"cumulative_reward": self.cumulative_reward, "action_is_valid": bool(reward >= 0.0)}
+                info = {"cumulative_reward": self.cumulative_reward, "action_is_valid": valid_flag}
             else:
                 observation = msg_head + ("Choose your next action.")
-                info = {"cumulative_reward": self.cumulative_reward, "action_is_valid": 0 <= action < self.ACTION_SPACE.n}
+                info = {"cumulative_reward": self.cumulative_reward, "action_is_valid": valid_flag}
         else:
             # Difficulty normalization by random or antagonist
             if self.family == 'mab':
@@ -615,6 +666,7 @@ class LBATEnv(BaseDiscreteActionEnv, gym.Env):
 
             observation = msg_head + "Game finished. Thank you for playing!"
             info = {
+                "action_is_valid": valid_flag,
                 "protagonist_regret": cumulative_regret,
                 "antagonist_regret": antagonist_regret,
                 "random_regret": random_regret,

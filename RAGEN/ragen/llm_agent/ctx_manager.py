@@ -569,7 +569,14 @@ class ContextManager:
                         if (not only_pos) or (base_r >= 0.0):
                             if _think_pass(entry):
                                 step = float(getattr(step_cfg, "beta", 0.2)) * float(batch_scale)
-                    per_turn.append(base_r + step)
+
+                    inv_units = float(getattr(self.config.agent_proxy, "invalid_action_penalty_units", 1.0))
+                    is_invalid = not bool(entry.get("info", {}).get("action_is_valid", True))
+                    penalty = (-inv_units * scale) if is_invalid else 0.0
+                    print("format penalty: ", penalty)
+
+                    per_turn.append(base_r + step + penalty)
+
                 scores.append(per_turn)
 
             # score_tensor, loss_mask, response_mask = get_masks_and_scores(input_ids, self.tokenizer, scores, use_turn_scores=self.config.agent_proxy.use_turn_scores, enable_response_mask=self.config.enable_response_mask, debug=self.debug_mask_sanity)

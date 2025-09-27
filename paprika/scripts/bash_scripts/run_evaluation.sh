@@ -1,7 +1,7 @@
 conda activate paprika
 
-# AGENT=llama-3.1-8b-instruct
-AGENT=qwen2.5-7B-Instruct
+# AGENT is expected to be provided by the SLURM script
+: "${AGENT:?AGENT env var must be set (e.g., in SLURM script)}"
 
 MODEL_MAX_LENGTH=32000
 
